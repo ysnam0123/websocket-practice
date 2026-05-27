@@ -14,17 +14,21 @@ export default function Stage1EchoPage() {
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 
-    // handshake 성공, 통신 준비 완료
+    // ===================================================
+    // 4개의 이벤트 핸들러
+    // prev를 쓰는 이유: 옛날 log값을 덮어쓰기 위함
+
+    // 1. handshake 성공, 통신 준비 완료
     ws.onopen = () => {
       setLog((prev) => [...prev, '[open] 서버에 연결됨']);
     };
 
-    // 서버에서 메세지 도착
+    // 2. 서버에서 메세지 도착
     ws.onmessage = (event) => {
       setLog((prev) => [...prev, `[recv] ${event.data}`]);
     };
 
-    // 연결 종료
+    // 3. 연결 종료
     ws.onclose = (event) => {
       setLog((prev) => [
         ...prev,
@@ -32,10 +36,11 @@ export default function Stage1EchoPage() {
       ]);
     };
 
-    // 연결/통신 에러
+    // 4. 연결/통신 에러
     ws.onerror = () => {
       setLog((prev) => [...prev, '[error] 에러 발생']);
     };
+    // ===================================================
 
     // 페이지를 떠나거나 컴포넌트가 언마운트되면 연결을 닫는다
     return () => {
